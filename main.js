@@ -43,30 +43,28 @@ const actions = {
 
 // Rule 3: Reducers interpret actions
 const reducer = (state, action) => {
-  if (action.type === actionTypes.addTodo) {
-    const todo = createTodo(action.payload);
+  switch (action.type) {
+    case actionTypes.addTodo:
+      const todo = createTodo(action.payload);
 
-    return [...state, todo];
-  }
+      return [...state, todo];
 
-  if (action.type === actionTypes.removeTodo) {
-    return state.filter((todo) => todo.id !== action.payload);
-  }
+    case actionTypes.removeTodo:
+      return state.filter((todo) => todo.id !== action.payload);
 
-  if (action.type === actionTypes.toggleTodo) {
-    return state.map((todo) => {
-      if (todo.id === action.payload) {
-        return {
-          ...todo,
-          complete: !todo.complete
-        };
-      } else {
-        return todo;
-      }
-    });
+    case actionTypes.toggleTodo:
+      return state.map((todo) => {
+        if (todo.id === action.payload) {
+          return {
+            ...todo,
+            complete: !todo.complete
+          };
+        } else {
+          return todo;
+        }
+      });
   }
 };
-
 const createTodo = (text) => {
   return {
     id: globalId++,
