@@ -32,7 +32,7 @@ const actions = {
   },
   editTodo: (id, newText) => {
     return {
-      type: actionTypes.toggleTodo,
+      type: actionTypes.editTodo,
       payload: {
         id: id,
         newText: newText
@@ -63,6 +63,18 @@ const reducer = (state, action) => {
           return todo;
         }
       });
+
+    case actionTypes.editTodo:
+      return state.map((todo) => {
+        if (todo.id === action.payload.id) {
+          return {
+            ...todo,
+            text: action.payload.newText
+          };
+        } else {
+          return todo;
+        }
+      });
   }
 };
 const createTodo = (text) => {
@@ -75,9 +87,13 @@ const createTodo = (text) => {
 
 const actionsList = [
   actions.addTodo('Buy milk'),
+  actions.editTodo(0, 'Buy grass'),
+  actions.editTodo(0, 'Buy laundry'),
+  actions.editTodo(0, 'Buy Stefan'),
+  actions.editTodo(0, 'Buy Yazeed'),
+  actions.editTodo(0, 'Buy Bill Cosby'),
   actions.toggleTodo(0),
-  actions.toggleTodo(0),
-  actions.toggleTodo(0)
+  actions.removeTodo(0)
 ];
 
 console.log(actionsList);
