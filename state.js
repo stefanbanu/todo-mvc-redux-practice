@@ -85,19 +85,25 @@ const createTodo = (text) => {
   };
 };
 
-const actionsList = [
-  actions.addTodo('Buy milk'),
-  actions.editTodo(0, 'Buy grass'),
-  actions.editTodo(0, 'Buy laundry'),
-  actions.editTodo(0, 'Buy Stefan'),
-  actions.editTodo(0, 'Buy Yazeed'),
-  actions.editTodo(0, 'Buy Bill Cosby'),
-  actions.toggleTodo(0),
-  actions.removeTodo(0)
-];
+const createStore = () => {
+  let currentState = initialState;
+  let listeners = [];
 
-console.log(actionsList);
+  const store = {
+    dispatch: (action) => {
+      currentState = reducer(currentState, action);
 
-const newState = actionsList.reduce(reducer, initialState);
+      listeners.forEach((listener) => {
+        listener(currentState);
+      });
+    },
+    subscribe: (callbackFunction) => {
+      listeners.push(callbackFunction);
+    }
+  };
 
-console.log(newState);
+  return store;
+};
+
+window.actions;
+window.store = createStore();
