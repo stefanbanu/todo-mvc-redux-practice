@@ -52,12 +52,3 @@ function completedItem(event){
     item.classList.remove("completed");
   }
 }
-
-function removeItem(event) {
-  const action = actions.removeTodo(event.target.item);
-  store.dispatch(action);
-  let item = this.parentNode.parentNode;
-  let parent = item.parentNode;
-  parent.removeChild(item);
-  
-}
