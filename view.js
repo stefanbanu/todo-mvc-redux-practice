@@ -4,7 +4,7 @@ const ul = document.querySelector(".todo-list");
 document.querySelector(".new-todo").addEventListener("keydown", event => {
   if (event.key.toLocaleLowerCase() === "enter" && input.value) {
     const action = actions.addTodo(event.target.value);
-    window.store.dispatch(action);
+    store.dispatch(action);
     input.value = "";
   }
 });
@@ -32,7 +32,10 @@ store.subscribe(latestState => {
 
     let removeButton = document.createElement("button");
     removeButton.classList.add("destroy");
-    removeButton.addEventListener("click", removeItem);
+    removeButton.addEventListener("click", event=>{
+      const action = actions.removeTodo(todo.id);
+      store.dispatch(action);
+    });
     divView.appendChild(removeButton);
 
     item.appendChild(divView);
@@ -50,8 +53,11 @@ function completedItem(event){
   }
 }
 
-function removeItem() {
+function removeItem(event) {
+  const action = actions.removeTodo(event.target.item);
+  store.dispatch(action);
   let item = this.parentNode.parentNode;
   let parent = item.parentNode;
   parent.removeChild(item);
+  
 }
