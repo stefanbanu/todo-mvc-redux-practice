@@ -11,11 +11,11 @@ document.querySelector(".new-todo").addEventListener("keydown", event => {
 
 store.subscribe(latestState => {
   console.log(latestState);
-  ul.innerHTML = "";
+
+  ul.innerHTML = '';
 
   latestState.forEach(todo => {
     const item = document.createElement("li");
-    // li.innerHTML = todo.text;
 
     let divView = document.createElement("div");
     divView.classList.add("view");
@@ -23,32 +23,27 @@ store.subscribe(latestState => {
     let checkBox = document.createElement("input");
     checkBox.classList.add("toggle");
     checkBox.setAttribute("type", "checkbox");
-
     checkBox.addEventListener('change', completedItem);
-
     divView.appendChild(checkBox);
 
-    let label = document.createElement("Label");
-    label.innerHTML = input.value;
-
+    let label = document.createElement("Label");  
+    label.innerHTML = todo.text;
     divView.appendChild(label);
 
     let removeButton = document.createElement("button");
     removeButton.classList.add("destroy");
     removeButton.addEventListener("click", removeItem);
-
     divView.appendChild(removeButton);
 
     item.appendChild(divView);
-
     ul.appendChild(item);
-    // ul.insertBefore(item, ul.childNodes[0]);
   });
 });
 
-function completedItem(checked){
+
+function completedItem(event){
   let item = this.parentNode.parentNode;
-  if (checked) {
+  if (event.target.checked) {
     item.classList.add("completed");
   } else {
     item.classList.remove("completed");
