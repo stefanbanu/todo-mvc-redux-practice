@@ -12,27 +12,27 @@ document.querySelector(".new-todo").addEventListener("keydown", event => {
 store.subscribe(latestState => {
   console.log(latestState);
 
-  ul.innerHTML = '';
+  ul.innerHTML = "";
 
-  latestState.forEach(todo => {
+  latestState.todos.forEach(todo => {
     const item = document.createElement("li");
 
-    let divView = document.createElement("div");
+    const divView = document.createElement("div");
     divView.classList.add("view");
 
-    let checkBox = document.createElement("input");
+    const checkBox = document.createElement("input");
     checkBox.classList.add("toggle");
     checkBox.setAttribute("type", "checkbox");
-    checkBox.addEventListener('change', completedItem);
+    checkBox.addEventListener("change", completedItem);
     divView.appendChild(checkBox);
 
-    let label = document.createElement("Label");  
+    const label = document.createElement("Label");
     label.innerHTML = todo.text;
     divView.appendChild(label);
 
-    let removeButton = document.createElement("button");
+    const removeButton = document.createElement("button");
     removeButton.classList.add("destroy");
-    removeButton.addEventListener("click", event=>{
+    removeButton.addEventListener("click", event => {
       const action = actions.removeTodo(todo.id);
       store.dispatch(action);
     });
@@ -43,8 +43,13 @@ store.subscribe(latestState => {
   });
 });
 
+document.getElementById("active").addEventListener("click", function() {
+  console.log("test");
+  const action = actions.displayActive();
+  store.dispatch(action);
+});
 
-function completedItem(event){
+function completedItem(event) {
   let item = this.parentNode.parentNode;
   if (event.target.checked) {
     item.classList.add("completed");
