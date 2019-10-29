@@ -9,21 +9,41 @@ document.querySelector(".new-todo").addEventListener("keydown", event => {
   }
 });
 
+const filterTodosByVisibility = (todos, visibility) => {
+  if (visibility === filterTypes.allItems) {
+    return todos;
+  } else if (visibility === filterTypes.activeItems) {
+    return todos.filter(todo => todo.complete === false);
+  } else if (visibility === filterTypes.completedItems) {
+    return todos.filter(todo => todo.complete === true);
+  }
+};
+
 store.subscribe(latestState => {
-  console.log(latestState);
+  console.log("after subscribe ", latestState);
 
   ul.innerHTML = "";
-
-  latestState.todos.forEach(todo => {
+  const filteredTodos = filterTodosByVisibility(
+    latestState.todos,
+    latestState.currentFilter
+  );
+  console.log(filteredTodos);
+  filteredTodos.forEach(todo => {
     const item = document.createElement("li");
-
+    item.classList.toggle("completed", todo.complete);
     const divView = document.createElement("div");
     divView.classList.add("view");
 
     const checkBox = document.createElement("input");
     checkBox.classList.add("toggle");
     checkBox.setAttribute("type", "checkbox");
-    checkBox.addEventListener("change", completedItem);
+    checkBox.addEventListener("change", function(event) {
+      const action = actions.toggleTodo(todo.id);
+      store.dispatch(action);
+    });
+
+    checkBox.toggleAttribute("checked", todo.complete);
+
     divView.appendChild(checkBox);
 
     const label = document.createElement("Label");
@@ -45,15 +65,29 @@ store.subscribe(latestState => {
 
 document.getElementById("active").addEventListener("click", function() {
   console.log("test");
-  const action = actions.displayActive();
+  const action = actions.changeVisibility(filterTypes.activeItems);
   store.dispatch(action);
 });
 
-function completedItem(event) {
-  let item = this.parentNode.parentNode;
-  if (event.target.checked) {
-    item.classList.add("completed");
-  } else {
-    item.classList.remove("completed");
-  }
-}
+document.getElementById("all").addEventListener("click", function() {
+  const action = actions.changeVisibility(filterTypes.allItems);
+  store.dispatch(action);
+});
+
+document.getElementById("completed").addEventListener("click", function() {
+  console.log("test");
+  const action = actions.changeVisibility(filterTypes.completedItems);
+  store.dispatch(action);
+});
+
+// function completedItem(event) {
+//   console.log("checked");
+//   let item = this.parentNode.parentNode;
+//   if (event.target.checked) {
+//     item.classList.add("completed");
+//     const action = actions.toggleTodo();
+//     store.dispatch(action);
+//   } else {
+//     item.classList.remove("completed");
+//   }
+// }

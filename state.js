@@ -9,6 +9,7 @@ const initialState = {
   todos: [],
   currentFilter: filterTypes.allItems
 };
+
 let globalId = 0;
 
 // Rule 2: State is read-only
@@ -18,9 +19,7 @@ const actionTypes = {
   removeTodo: "REMOVE_TODO",
   toggleTodo: "TOGGLE_TODO",
   editTodo: "EDIT_TODO",
-  displayActive: "DISPLAY_ACTIVE",
-  displayCompleted: "DISPLAY_COMPLETED",
-  displayAll: "DISPLAY_ALL"
+  changeVisibility: "CHANGE_VISIBILITY"
 };
 
 const actions = {
@@ -51,29 +50,19 @@ const actions = {
       }
     };
   },
-  displayActive: () => {
+  changeVisibility: visible => {
     return {
-      type: actionTypes.displayActive
-    };
-  },
-  displayAll: () => {
-    return {
-      type: actionTypes.displayAll
-    };
-  },
-  displayCompleted: () => {
-    return {
-      type: actionTypes.displayCompleted
+      type: actionTypes.changeVisibility,
+      payload: visible
     };
   }
 };
 
 // Rule 3: Reducers interpret actions
-const reducer = (state, action) => {
+const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.addTodo:
       const todo = createTodo(action.payload);
-
       return {
         ...state,
         todos: [...state.todos, todo]
@@ -115,23 +104,14 @@ const reducer = (state, action) => {
         })
       };
 
-    case actionTypes.displayAll:
+    case actionTypes.changeVisibility:
       return {
         ...state,
-        currentFilter: filterTypes.allItems
+        currentFilter: action.payload
       };
 
-    case actionTypes.displayActive:
-      return {
-        ...state,
-        currentFilter: filterTypes.activeItems
-      };
-
-    case actionTypes.displayCompleted:
-      return {
-        ...state,
-        currentFilter: filterTypes.completedItems
-      };
+    default:
+      return state;
   }
 };
 
