@@ -19,7 +19,8 @@ const actionTypes = {
   removeTodo: "REMOVE_TODO",
   toggleTodo: "TOGGLE_TODO",
   editTodo: "EDIT_TODO",
-  changeVisibility: "CHANGE_VISIBILITY"
+  changeVisibility: "CHANGE_VISIBILITY",
+  clearCompleted: "CLEAR_COMPLETED"
 };
 
 const actions = {
@@ -53,6 +54,12 @@ const actions = {
   changeVisibility: visible => {
     return {
       type: actionTypes.changeVisibility,
+      payload: visible
+    };
+  },
+  clearCompletedItems: visible => {
+    return {
+      type: actionTypes.clearCompleted,
       payload: visible
     };
   }
@@ -102,6 +109,12 @@ const reducer = (state = initialState, action) => {
             return todo;
           }
         })
+      };
+
+    case actionTypes.clearCompleted:
+      return {
+        ...state,
+        todos: state.todos.filter(todo => !todo.complete)
       };
 
     case actionTypes.changeVisibility:
