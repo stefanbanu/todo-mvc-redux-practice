@@ -20,7 +20,8 @@ const actionTypes = {
   toggleTodo: "TOGGLE_TODO",
   editTodo: "EDIT_TODO",
   changeVisibility: "CHANGE_VISIBILITY",
-  clearCompleted: "CLEAR_COMPLETED"
+  clearCompleted: "CLEAR_COMPLETED",
+  toggleAll: "COMPLETE_ALL"
 };
 
 const actions = {
@@ -61,6 +62,11 @@ const actions = {
     return {
       type: actionTypes.clearCompleted,
       payload: visible
+    };
+  },
+  toggleAll: () => {
+    return {
+      type: actionTypes.toggleAll
     };
   }
 };
@@ -121,6 +127,23 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         currentFilter: action.payload
+      };
+
+    case actionTypes.toggleAll:
+      const isAnyItemNotComplete = state.todos.some(t => t.complete === false);
+
+      const makeTodoComplete = (obj, complete) => {
+        return {
+          ...obj,
+          complete: complete
+        };
+      };
+
+      return {
+        ...state,
+        todos: state.todos.map(todo =>
+          makeTodoComplete(todo, isAnyItemNotComplete)
+        )
       };
 
     default:
