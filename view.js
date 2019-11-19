@@ -1,5 +1,7 @@
 const input = document.querySelector(".new-todo");
 const ul = document.querySelector(".todo-list");
+const clearCompletedButton = document.querySelector(".clear-completed");
+const activeItemsLeft = document.querySelector(".todo-count");
 
 document.querySelector(".new-todo").addEventListener("keydown", event => {
   if (event.key.toLocaleLowerCase() === "enter" && input.value) {
@@ -20,11 +22,11 @@ const filterTodosByVisibility = (todos, visibility) => {
 };
 
 store.subscribe(latestState => {
-  console.log("after subscribe ", latestState);
-
   const clearCompletedList = latestState.todos.some(t => t.complete === true);
-
   setClearCompletedButtonVisibility(clearCompletedList);
+
+  const activeTodos = latestState.todos.filter(t => t.complete === false);
+  activeItemsLeft.innerHTML = getCountText(activeTodos);
 
   ul.innerHTML = "";
   const filteredTodos = filterTodosByVisibility(
@@ -32,7 +34,6 @@ store.subscribe(latestState => {
     latestState.currentFilter
   );
 
-  console.log(filteredTodos);
   filteredTodos.forEach(todo => {
     const item = document.createElement("li");
     item.classList.toggle("completed", todo.complete);
@@ -70,7 +71,6 @@ store.subscribe(latestState => {
 });
 
 document.getElementById("active").addEventListener("click", function() {
-  console.log("test");
   const action = actions.changeVisibility(filterTypes.activeItems);
   store.dispatch(action);
 });
@@ -81,28 +81,26 @@ document.getElementById("all").addEventListener("click", function() {
 });
 
 document.getElementById("completed").addEventListener("click", function() {
-  console.log("test");
   const action = actions.changeVisibility(filterTypes.completedItems);
   store.dispatch(action);
   setClearCompletedButtonVisibility(filterTypes.completedItems);
 });
 
 document.getElementById("toggle-all").addEventListener("change", function() {
-  console.log("toglle all");
   const action = actions.toggleAll();
-
   store.dispatch(action);
 });
 
-const clearCompletedButton = document.querySelector(".clear-completed");
-
 clearCompletedButton.addEventListener("click", function() {
-  console.log("clear completed");
-
   const action = actions.clearCompletedItems(filterTypes.allItems);
   store.dispatch(action);
 });
 
 function setClearCompletedButtonVisibility(visible) {
   clearCompletedButton.style.display = visible ? "block" : "none";
+}
+
+function getCountText(itemsLeft) {
+  const suffix = itemsLeft.length === 1 ? " item left" : " items left";
+  return itemsLeft.length + suffix;
 }
