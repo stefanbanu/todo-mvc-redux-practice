@@ -65,6 +65,31 @@ store.subscribe(latestState => {
 
     divView.appendChild(removeButton);
 
+    // document.querySelector(".new-todo").addEventListener("keydown", event => {
+    //   if (event.key.toLocaleLowerCase() === "enter" && input.value) {
+    //     const action = actions.addTodo(event.target.value);
+    //     store.dispatch(action);
+    //     input.value = "";
+    //   }
+    // });
+
+    item.addEventListener("dblclick", event => {
+      console.log("working");
+      const text = item.input;
+      const action = actions.editTodo(
+        todo.id,
+        //   item.addEventListener("keydown", event => {
+        //     if (event.key.toLocaleLowerCase() === "enter" && input.value) {
+        //       const action = actions.addTodo(event.target.value);
+        //       store.dispatch(action);
+        //     }
+        //   })
+        // );
+        text
+      );
+      store.dispatch(action);
+    });
+
     item.appendChild(divView);
     ul.appendChild(item);
   });
