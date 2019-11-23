@@ -52,9 +52,31 @@ store.subscribe(latestState => {
 
     divView.appendChild(checkBox);
 
-    const label = document.createElement("Label");
-    label.innerHTML = todo.text;
-    divView.appendChild(label);
+    if (todo.editing) {
+      console.log("todo editing is true");
+      const textBox = document.createElement("input");
+      divView.appendChild(textBox);
+      textBox.addEventListener("blur", event => {
+        console.log("on blur");
+        const action = actions.toggleEditing(todo.id, false);
+        store.dispatch(action);
+      });
+      textBox.value = todo.text;
+
+      textBox.focus();
+    } else {
+      console.log("inside else");
+      const label = document.createElement("label");
+      label.innerHTML = todo.text;
+      divView.appendChild(label);
+    }
+
+    item.addEventListener("dblclick", event => {
+      console.log("working");
+
+      const action = actions.toggleEditing(todo.id, true);
+      store.dispatch(action);
+    });
 
     const removeButton = document.createElement("button");
     removeButton.classList.add("destroy");
@@ -64,31 +86,6 @@ store.subscribe(latestState => {
     });
 
     divView.appendChild(removeButton);
-
-    // document.querySelector(".new-todo").addEventListener("keydown", event => {
-    //   if (event.key.toLocaleLowerCase() === "enter" && input.value) {
-    //     const action = actions.addTodo(event.target.value);
-    //     store.dispatch(action);
-    //     input.value = "";
-    //   }
-    // });
-
-    item.addEventListener("dblclick", event => {
-      console.log("working");
-      const text = item.input;
-      const action = actions.editTodo(
-        todo.id,
-        //   item.addEventListener("keydown", event => {
-        //     if (event.key.toLocaleLowerCase() === "enter" && input.value) {
-        //       const action = actions.addTodo(event.target.value);
-        //       store.dispatch(action);
-        //     }
-        //   })
-        // );
-        text
-      );
-      store.dispatch(action);
-    });
 
     item.appendChild(divView);
     ul.appendChild(item);

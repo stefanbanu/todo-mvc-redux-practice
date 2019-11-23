@@ -21,7 +21,8 @@ const actionTypes = {
   editTodo: "EDIT_TODO",
   changeVisibility: "CHANGE_VISIBILITY",
   clearCompleted: "CLEAR_COMPLETED",
-  toggleAll: "COMPLETE_ALL"
+  toggleAll: "COMPLETE_ALL",
+  toggleEditing: "TOGGLE_EDITING"
 };
 
 const actions = {
@@ -52,6 +53,17 @@ const actions = {
       }
     };
   },
+
+  toggleEditing: (id, editing) => {
+    return {
+      type: actionTypes.toggleEditing,
+      payload: {
+        id: id,
+        editing: editing
+      }
+    };
+  },
+
   changeVisibility: visible => {
     return {
       type: actionTypes.changeVisibility,
@@ -146,6 +158,21 @@ const reducer = (state = initialState, action) => {
         )
       };
 
+    case actionTypes.toggleEditing:
+      return {
+        ...state,
+        todos: state.todos.map(todo => {
+          if (todo.id === action.payload.id) {
+            return {
+              ...todo,
+              editing: action.payload.editing
+            };
+          } else {
+            return todo;
+          }
+        })
+      };
+
     default:
       return state;
   }
@@ -155,7 +182,8 @@ const createTodo = text => {
   return {
     id: globalId++,
     text: text,
-    complete: false
+    complete: false,
+    editing: false
   };
 };
 
