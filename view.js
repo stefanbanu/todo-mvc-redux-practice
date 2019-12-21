@@ -50,13 +50,6 @@ store.subscribe((latestState) => {
 
     checkBox.toggleAttribute('checked', todo.complete);
 
-    divView.appendChild(checkBox);
-
-    item.addEventListener('dblclick', (event) => {
-      const action = actions.toggleEditing(todo.id, true);
-      store.dispatch(action);
-    });
-
     const removeButton = document.createElement('button');
     removeButton.classList.add('destroy');
     removeButton.addEventListener('click', (event) => {
@@ -65,20 +58,38 @@ store.subscribe((latestState) => {
     });
 
     divView.appendChild(removeButton);
+    divView.appendChild(checkBox);
 
     item.appendChild(divView);
     ul.appendChild(item);
 
     if (todo.editing) {
       const textBox = document.createElement('input');
+      textBox.className = 'edit';
 
-      textBox.addEventListener('blur', (event) => {
+      item.classList.add('editing');
+
+      textBox.addEventListener('blur', () => {
         const action = actions.toggleEditing(todo.id, false);
         store.dispatch(action);
       });
 
-      divView.appendChild(textBox);
-      textBox.classList.add('editing');
+      textBox.addEventListener('keydown', (event) => {
+        const ENTER_KEY = 13;
+        const ESCAPE_KEY = 27;
+
+        const stopEditing = actions.toggleEditing(todo.id, false);
+        const updateTodo = actions.updateTodo(todo.id, textBox.value);
+
+        if (event.keyCode === ESCAPE_KEY) {
+          store.dispatch(stopEditing);
+        } else if (event.keyCode === ENTER_KEY) {
+          store.dispatch(stopEditing);
+          store.dispatch(updateTodo);
+        }
+      });
+
+      item.appendChild(textBox);
       textBox.value = todo.text;
 
       textBox.focus();
@@ -86,6 +97,11 @@ store.subscribe((latestState) => {
       const label = document.createElement('label');
       label.innerHTML = todo.text;
       divView.appendChild(label);
+
+      label.addEventListener('dblclick', (event) => {
+        const action = actions.toggleEditing(todo.id, true);
+        store.dispatch(action);
+      });
     }
   });
 });
