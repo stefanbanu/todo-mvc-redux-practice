@@ -1,3 +1,17 @@
+/*
+  TODO: Add LocalStorage support.
+
+  You'll need to add "side-effects" to the existing state functionality.
+
+  * When app loads, check localStorage for todos.
+    * If todos exist in localStorage, load them into app state.
+    * Else fall back to empty todos []
+
+  * When user adds item, save it to LocalStorage (localStorage.setItem(key, value)).
+
+  * When user removes item, remove it from LocalStorage (localStorage.removeItem(key)) 
+*/
+
 // Rule 1: single source of truth
 const filterTypes = {
   allItems: 'ALL',
