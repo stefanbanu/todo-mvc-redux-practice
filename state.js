@@ -14,45 +14,53 @@
 
 // Rule 1: single source of truth
 const filterTypes = {
-  allItems: 'ALL',
-  activeItems: 'ACTIVE',
-  completedItems: 'COMPLETED'
+  allItems: "ALL",
+  activeItems: "ACTIVE",
+  completedItems: "COMPLETED"
 };
 
-const initialState = {
-  todos: [],
-  currentFilter: filterTypes.allItems
-};
+let initialState;
+console.log("teste");
+if (localStorage.getItem("appState")) {
+  console.log("inside");
+  initialState = JSON.parse(localStorage.getItem("appState"));
+  console.log(initialState);
+} else {
+  initialState = {
+    todos: [],
+    currentFilter: filterTypes.allItems
+  };
+}
 
 let globalId = 0;
 
 // Rule 2: State is read-only
 // Fire an action that intends a change
 const actionTypes = {
-  addTodo: 'ADD_TODO',
-  removeTodo: 'REMOVE_TODO',
-  toggleTodo: 'TOGGLE_TODO',
-  updateTodo: 'UPDATE_TODO',
-  changeVisibility: 'CHANGE_VISIBILITY',
-  clearCompleted: 'CLEAR_COMPLETED',
-  toggleAll: 'COMPLETE_ALL',
-  toggleEditing: 'TOGGLE_EDITING'
+  addTodo: "ADD_TODO",
+  removeTodo: "REMOVE_TODO",
+  toggleTodo: "TOGGLE_TODO",
+  updateTodo: "UPDATE_TODO",
+  changeVisibility: "CHANGE_VISIBILITY",
+  clearCompleted: "CLEAR_COMPLETED",
+  toggleAll: "COMPLETE_ALL",
+  toggleEditing: "TOGGLE_EDITING"
 };
 
 const actions = {
-  addTodo: (text) => {
+  addTodo: text => {
     return {
       type: actionTypes.addTodo,
       payload: text
     };
   },
-  removeTodo: (id) => {
+  removeTodo: (id, key) => {
     return {
       type: actionTypes.removeTodo,
       payload: id
     };
   },
-  toggleTodo: (id) => {
+  toggleTodo: id => {
     return {
       type: actionTypes.toggleTodo,
       payload: id
@@ -78,13 +86,13 @@ const actions = {
     };
   },
 
-  changeVisibility: (visible) => {
+  changeVisibility: visible => {
     return {
       type: actionTypes.changeVisibility,
       payload: visible
     };
   },
-  clearCompletedItems: (visible) => {
+  clearCompletedItems: visible => {
     return {
       type: actionTypes.clearCompleted,
       payload: visible
@@ -110,13 +118,13 @@ const reducer = (state = initialState, action) => {
     case actionTypes.removeTodo:
       return {
         ...state,
-        todos: state.todos.filter((todo) => todo.id !== action.payload)
+        todos: state.todos.filter(todo => todo.id !== action.payload)
       };
 
     case actionTypes.toggleTodo:
       return {
         ...state,
-        todos: state.todos.map((todo) => {
+        todos: state.todos.map(todo => {
           if (todo.id === action.payload) {
             return {
               ...todo,
@@ -131,7 +139,7 @@ const reducer = (state = initialState, action) => {
     case actionTypes.updateTodo:
       return {
         ...state,
-        todos: state.todos.map((todo) => {
+        todos: state.todos.map(todo => {
           if (todo.id === action.payload.id) {
             return {
               ...todo,
@@ -146,7 +154,7 @@ const reducer = (state = initialState, action) => {
     case actionTypes.clearCompleted:
       return {
         ...state,
-        todos: state.todos.filter((todo) => !todo.complete)
+        todos: state.todos.filter(todo => !todo.complete)
       };
 
     case actionTypes.changeVisibility:
@@ -156,9 +164,7 @@ const reducer = (state = initialState, action) => {
       };
 
     case actionTypes.toggleAll:
-      const isAnyItemNotComplete = state.todos.some(
-        (t) => t.complete === false
-      );
+      const isAnyItemNotComplete = state.todos.some(t => t.complete === false);
 
       const makeTodoComplete = (obj, complete) => {
         return {
@@ -169,7 +175,7 @@ const reducer = (state = initialState, action) => {
 
       return {
         ...state,
-        todos: state.todos.map((todo) =>
+        todos: state.todos.map(todo =>
           makeTodoComplete(todo, isAnyItemNotComplete)
         )
       };
@@ -177,7 +183,7 @@ const reducer = (state = initialState, action) => {
     case actionTypes.toggleEditing:
       return {
         ...state,
-        todos: state.todos.map((todo) => {
+        todos: state.todos.map(todo => {
           if (todo.id === action.payload.id) {
             return {
               ...todo,
@@ -194,7 +200,7 @@ const reducer = (state = initialState, action) => {
   }
 };
 
-const createTodo = (text) => {
+const createTodo = text => {
   return {
     id: globalId++,
     text: text,
@@ -205,23 +211,29 @@ const createTodo = (text) => {
 
 const createStore = () => {
   let currentState = initialState;
+  console.log(currentState);
   let listeners = [];
 
-  const store = {
-    dispatch: (action) => {
+  const observable = {
+    dispatch: action => {
       currentState = reducer(currentState, action);
 
-      listeners.forEach((listener) => {
+      localStorage.setItem("appState", JSON.stringify(currentState));
+
+      listeners.forEach(listener => {
         listener(currentState);
       });
     },
-    subscribe: (callbackFunction) => {
-      listeners.push(callbackFunction);
+    // storing observers/subscribers/functions
+    subscribe: observerFunction => {
+      listeners.push(observerFunction);
     }
   };
 
-  return store;
+  return observable;
 };
 
 window.actions;
 window.store = createStore();
+
+
